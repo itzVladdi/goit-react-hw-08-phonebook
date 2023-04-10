@@ -1,19 +1,20 @@
 import axios from 'axios';
 
-const $publicHost = axios.create({
-  baseURL: 'https://connections-api.herokuapp.com/',
-});
+// const $publicHost = axios.create({
+//   baseURL: 'https://connections-api.herokuapp.com/',
+// });
 
-const $privateHost = axios.create({
-  baseURL: 'https://connections-api.herokuapp.com/',
-});
+// const $privateHost = axios.create({
+//   baseURL: 'https://connections-api.herokuapp.com/',
+// });
 
-const authInterceptor = config => {
-  config.headers['Authorization'] = localStorage.getItem('token');
-  return config;
-};
+// const authInterceptor = config => {
+//   const localData = JSON.parse(localStorage.getItem('persist:token'));
+//   config.headers['Authorization'] = JSON.parse(localData.token);
+//   return config;
+// };
 
-$privateHost.interceptors.request.use(authInterceptor);
+// $privateHost.interceptors.request.use(authInterceptor);
 
 /*
     const $privateHost = axios.create({
@@ -24,24 +25,35 @@ $privateHost.interceptors.request.use(authInterceptor);
     });
 */
 
+axios.defaults.baseURL = 'https://connections-api.herokuapp.com/';
+
+export const setAuthHeader = token => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+
+// Utility to remove JWT
+const clearAuthHeader = () => {
+  axios.defaults.headers.common.Authorization = '';
+};
+
 export const UserAPI = {
   login: async formData => {
-    const { data } = await $publicHost.post('users/login', formData);
-
+    const { data } = await axios.post('users/login', formData);
+    setAuthHeader(data.token);
     return data;
   },
   register: async formData => {
-    const { data } = await $publicHost.post('users/signup', formData);
-
+    const { data } = await axios.post('users/signup', formData);
+    setAuthHeader(data.token);
     return data;
   },
   logout: async () => {
-    const { data } = await $privateHost.post('users/logout');
-
+    const { data } = await axios.post('users/logout');
+    clearAuthHeader();
     return data;
   },
   refresh: async () => {
-    const { data } = await $privateHost.get('users/current');
+    const { data } = await axios.get('users/current');
 
     return data;
   },
@@ -49,17 +61,17 @@ export const UserAPI = {
 
 export const ContactsAPI = {
   getContacts: async () => {
-    const { data } = await $privateHost.get('contacts');
+    const { data } = await axios.get('contacts');
 
     return data;
   },
   addContact: async formData => {
-    const { data } = await $privateHost.post('contacts', formData);
+    const { data } = await axios.post('contacts', formData);
 
     return data;
   },
   deleteContact: async contactId => {
-    const { data } = await $privateHost.delete(`contacts/${contactId}`);
+    const { data } = await axios.delete(`contacts/${contactId}`);
 
     return data;
   },

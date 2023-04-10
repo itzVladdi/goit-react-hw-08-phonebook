@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { selectIsLoggedIn } from 'redux/selectors';
+import { selectIsLoggedIn, selectToken } from 'redux/selectors';
 import { SharedLayout } from './SharedLayout/SharedLayout';
 import { Home } from 'pages/Home';
 import Contacts from 'pages/Contacts';
@@ -11,10 +11,10 @@ import { requestRefreshUser } from 'redux/user/user.operations';
 
 export function App() {
   const isLoggedIn = useSelector(selectIsLoggedIn);
+  const token = useSelector(selectToken);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     if (isLoggedIn || !token) return;
 
     const refresh = async () => {
@@ -27,7 +27,7 @@ export function App() {
     };
 
     refresh();
-  }, [dispatch, isLoggedIn]);
+  }, [dispatch, isLoggedIn, token]);
 
   return (
     <>

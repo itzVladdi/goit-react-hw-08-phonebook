@@ -2,6 +2,7 @@
 export const selectUserStatus = state => state.user.status;
 export const selectIsLoggedIn = state => state.user.isLoggedIn;
 export const selectUserData = state => state.user.user;
+export const selectToken = state => state.user.token;
 
 // ----- Contacts Selectors --------------------------------
 export const selectContactsStatus = state => state.contacts.status;
